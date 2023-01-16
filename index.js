@@ -1,14 +1,17 @@
 const cors = require("cors");
 const Querry = require("./src/user/querry.schema");
 const express = require("express");
+require("dotenv").config();
+const sid = process.env.sid;
+const auth_token = process.env.auth_token;
 
 const connect = require("./config/db");
 const userRouter = require("./src/user/user.route");
 
 const app = express();
-// put in dotenv file  
-var sid = "ACf2017ad6a63e186963662292d1b2c82f";
-var auth_token = "aa957404173e5f14b865e26d1c06ad2e";
+// put in dotenv file
+// var sid = "ACf2017ad6a63e186963662292d1b2c82f";
+// var auth_token = "aa957404173e5f14b865e26d1c06ad2e";
 const twilio = require("twilio")(sid, auth_token);
 
 app.use(express.json());
@@ -25,9 +28,10 @@ app.post("/sendsms", async (req, res) => {
       .create({
         from: "+13854817224",
         to: `+${number}`,
-        body: `Hi, Your five  digit  Otp is ${otp} !`,
+        body: `Hi, Your five  digit  Otp is ${otp} `,
       })
-      .then((resp) => console.log(resp,"d")).catch(err => console.log(err))
+      .then((resp) => console.log(resp, "d"))
+      .catch((err) => console.log(err));
 
     let qry = await Querry.create({
       firstName,
