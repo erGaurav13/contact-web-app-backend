@@ -6,9 +6,9 @@ const connect = require("./config/db");
 const userRouter = require("./src/user/user.route");
 
 const app = express();
-
+// put in dotenv file  
 var sid = "ACf2017ad6a63e186963662292d1b2c82f";
-var auth_token = "f5440c12754906c4ddfd561c0389d85a";
+var auth_token = "aa957404173e5f14b865e26d1c06ad2e";
 const twilio = require("twilio")(sid, auth_token);
 
 app.use(express.json());
@@ -18,33 +18,35 @@ app.use(cors());
 app.use("/users", userRouter);
 
 app.post("/sendsms", async (req, res) => {
-  const { firstName,lastName, number, otp,dateTime } = req.body;
+  const { firstName, lastName, number, otp, dateTime } = req.body;
 
- try {
+  try {
+    twilio.messages
+      .create({
+        from: "+13854817224",
+        to: `+${number}`,
+        body: `Hi, Your five  digit  Otp is ${otp} !`,
+      })
+      .then((resp) => console.log(resp,"d")).catch(err => console.log(err))
 
-   twilio.messages
-   .create({
-     from: "+13854817224",
-     to:`+${number}`,
-     body: `Hi, Your five  digit  Otp is ${otp} !` ,
-   })
-   .then((resp) => console.log(resp)) 
-      
-   let qry = await Querry.create({ firstName,lastName, number, otp ,dateTime});
-     return res.send(qry);
- } catch (e) {
-   console.log(e)
-   return res.send(e);
- }
- res.send("error backend");
+    let qry = await Querry.create({
+      firstName,
+      lastName,
+      number,
+      otp,
+      dateTime,
+    });
+    return res.send(qry);
+  } catch (e) {
+    console.log(e);
+    return res.send(e);
+  }
+  res.send("error backend");
 });
-
 
 app.get("/", (req, res) => {
   res.send("Hello World WORKINGG");
 });
-
-
 
 // for send sms api
 
